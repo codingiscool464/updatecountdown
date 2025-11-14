@@ -1,113 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Weekly Update Countdown</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
   <style>
-    :root {
-      --bg: #0b0e14;
-      --accent: #00d1ff;
-      --card-bg: #1a1f27;
-      --card-hover: #232933;
-      --text: #cfefff;
+    :root{
+      --bg:#0b0e14; --card-bg:#1a1f27; --card-hover:#232933;
+      --accent:#00d1ff; --text:#e5e5e5; --subtitle:#9aa0a6;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;font-family:"Inter",Arial,sans-serif}
+    body{
+      background:var(--bg); color:var(--text);
+      display:flex; justify-content:center; align-items:center;
+      min-height:100vh; text-align:center; padding:20px;
+    }
+    .container{
+      background:var(--card-bg);
+      padding:40px;
+      border-radius:16px;
+      border:1px solid #2c3440;
+      box-shadow:0 0 20px rgba(0,209,255,0.2);
+      max-width:500px;
+      width:100%;
+      animation:fadeIn 0.8s ease;
+    }
+    h1{
+      font-size:2.2rem;
+      margin-bottom:10px;
+      color:var(--accent);
+    }
+    p.subtitle{
+      font-size:1rem;
+      color:var(--subtitle);
+      margin-bottom:25px;
+    }
+    #countdown{
+      font-size:2rem;
+      margin-top:15px;
+      color:var(--text);
     }
 
-    body {
-      background-color: var(--bg);
-      color: var(--accent);
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding-top: 100px;
-      animation: fadeIn 1s ease-in;
-    }
-
-    /* Suggestions link — same placement as launcher */
-    .suggestions-link {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      background-color: var(--card-bg);
-      color: var(--accent);
-      padding: 10px 20px;
-      border-radius: 8px;
-      text-decoration: none;
-      font-weight: bold;
-      box-shadow: 0 0 10px rgba(0,209,255,0.6);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .suggestions-link:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 20px rgba(0,209,255,0.9);
-    }
-
-    h1 {
-      font-size: 2.5em;
-      margin-bottom: 20px;
-      text-shadow: 0 0 15px var(--accent);
-    }
-
-    #countdown {
-      display: inline-block;
-      background-color: var(--card-bg);
-      padding: 20px 40px;
-      border-radius: 12px;
-      font-size: 2em;
-      font-weight: bold;
-      text-shadow: 0 0 10px var(--accent);
-      box-shadow: 0 0 20px rgba(0,209,255,0.6);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    #countdown:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 30px rgba(0,209,255,0.9);
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+    @keyframes fadeIn{
+      from{opacity:0; transform:translateY(10px)}
+      to{opacity:1; transform:translateY(0)}
     }
   </style>
 </head>
 <body>
-  <!-- Suggestions box in the same place -->
-  <a class="suggestions-link" href="https://codingiscool464.github.io/suggestionform/" target="_blank">Suggestions</a>
 
-  <h1>Countdown to Weekly Update</h1>
-  <div id="countdown"></div>
+  <div class="container">
+    <h1>Weekly Update Countdown</h1>
+    <p class="subtitle">Next Friday at 1:00 PM</p>
+    <div id="countdown">Loading…</div>
+  </div>
 
-  <script>
-    // Countdown logic for next Friday 1 PM EST/EDT
-    function getNextFriday1PM() {
-      const now = new Date();
-      const target = new Date(now);
+<script>
+function getNextFridayAtOne() {
+  const now = new Date();
+  const result = new Date();
 
-      const daysUntilFriday = (5 - now.getDay() + 7) % 7;
-      target.setDate(now.getDate() + daysUntilFriday);
-      target.setHours(13, 0, 0, 0); // 1 PM EST
+  // Set to next Friday
+  result.setDate(now.getDate() + ((5 - now.getDay() + 7) % 7));
+  result.setHours(13, 0, 0, 0); // 1:00 PM
 
-      if (now > target) {
-        target.setDate(target.getDate() + 7);
-      }
-      return target;
-    }
+  // If it's Friday past 1pm → go to next week
+  if (now.getDay() === 5 && now.getHours() >= 13) {
+    result.setDate(result.getDate() + 7);
+  }
 
-    function updateCountdown() {
-      const now = new Date();
-      const target = getNextFriday1PM();
-      const diff = target - now;
+  return result;
+}
 
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-      const minutes = Math.floor((diff / (1000 * 60)) % 60);
-      const seconds = Math.floor((diff / 1000) % 60);
+function updateCountdown() {
+  const target = getNextFridayAtOne();
+  const now = new Date();
+  const diff = target - now;
 
-      document.getElementById("countdown").textContent =
-        `${days}d ${hours}h ${minutes}m ${seconds}s`;
-    }
+  if (diff <= 0) {
+    document.getElementById("countdown").innerText = "Update time!";
+    return;
+  }
 
-    setInterval(updateCountdown, 1000);
-    updateCountdown();
-  </script>
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+  const minutes = Math.floor((diff / (1000 * 60)) % 60);
+  const seconds = Math.floor((diff / 1000) % 60);
+
+  document.getElementById("countdown").innerText =
+    `${days}d ${hours}h ${minutes}m ${seconds}s`;
+}
+
+setInterval(updateCountdown, 1000);
+updateCountdown();
+</script>
+
 </body>
 </html>
