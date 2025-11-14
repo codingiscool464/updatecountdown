@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Weekly Update Countdown</title>
+  <style>
+    body {
+      background-color: #0a0a0f;
+      color: #00ffff;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding-top: 100px;
+      animation: fadeIn 1s ease-in;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 20px;
+      text-shadow: 0 0 15px #00ffff;
+    }
+
+    #countdown {
+      display: inline-block;
+      background-color: #111122;
+      padding: 20px 40px;
+      border-radius: 12px;
+      font-size: 2em;
+      font-weight: bold;
+      text-shadow: 0 0 10px #00ffff;
+      box-shadow: 0 0 20px rgba(0,255,255,0.6);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    #countdown:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 30px rgba(0,255,255,0.9);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <h1>Countdown to Weekly Update</h1>
+  <div id="countdown"></div>
+
+  <script>
+    function getNextFriday1PM() {
+      const now = new Date();
+      const target = new Date(now);
+
+      // Find next Friday
+      const daysUntilFriday = (5 - now.getDay() + 7) % 7;
+      target.setDate(now.getDate() + daysUntilFriday);
+      target.setHours(13, 0, 0, 0); // 1 PM EST
+
+      // If it's already past 1 PM Friday, push to next week
+      if (now > target) {
+        target.setDate(target.getDate() + 7);
+      }
+
+      return target;
+    }
+
+    function updateCountdown() {
+      const now = new Date();
+      const target = getNextFriday1PM();
+      const diff = target - now;
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((diff / (1000 * 60)) % 60);
+      const seconds = Math.floor((diff / 1000) % 60);
+
+      document.getElementById("countdown").textContent =
+        `${days}d ${hours}h ${minutes}m ${seconds}s`;
+    }
+
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+  </script>
+</body>
+</html>
