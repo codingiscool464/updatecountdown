@@ -3,37 +3,64 @@
 <head>
   <meta charset="UTF-8">
   <title>Weekly Update Countdown</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
+    :root {
+      --bg: #0b0e14;
+      --accent: #00d1ff;
+      --card-bg: #1a1f27;
+      --card-hover: #232933;
+      --text: #cfefff;
+    }
+
     body {
-      background-color: #0a0a0f;
-      color: #00ffff;
+      background-color: var(--bg);
+      color: var(--accent);
       font-family: Arial, sans-serif;
       text-align: center;
       padding-top: 100px;
       animation: fadeIn 1s ease-in;
     }
 
+    /* Suggestions link — same placement as launcher */
+    .suggestions-link {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background-color: var(--card-bg);
+      color: var(--accent);
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      box-shadow: 0 0 10px rgba(0,209,255,0.6);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .suggestions-link:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(0,209,255,0.9);
+    }
+
     h1 {
       font-size: 2.5em;
       margin-bottom: 20px;
-      text-shadow: 0 0 15px #00ffff;
+      text-shadow: 0 0 15px var(--accent);
     }
 
     #countdown {
       display: inline-block;
-      background-color: #111122;
+      background-color: var(--card-bg);
       padding: 20px 40px;
       border-radius: 12px;
       font-size: 2em;
       font-weight: bold;
-      text-shadow: 0 0 10px #00ffff;
-      box-shadow: 0 0 20px rgba(0,255,255,0.6);
+      text-shadow: 0 0 10px var(--accent);
+      box-shadow: 0 0 20px rgba(0,209,255,0.6);
       transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
-
     #countdown:hover {
       transform: scale(1.05);
-      box-shadow: 0 0 30px rgba(0,255,255,0.9);
+      box-shadow: 0 0 30px rgba(0,209,255,0.9);
     }
 
     @keyframes fadeIn {
@@ -43,24 +70,25 @@
   </style>
 </head>
 <body>
+  <!-- Suggestions box in the same place -->
+  <a class="suggestions-link" href="https://codingiscool464.github.io/suggestionform/" target="_blank">Suggestions</a>
+
   <h1>Countdown to Weekly Update</h1>
   <div id="countdown"></div>
 
   <script>
+    // Countdown logic for next Friday 1 PM EST/EDT
     function getNextFriday1PM() {
       const now = new Date();
       const target = new Date(now);
 
-      // Find next Friday
       const daysUntilFriday = (5 - now.getDay() + 7) % 7;
       target.setDate(now.getDate() + daysUntilFriday);
       target.setHours(13, 0, 0, 0); // 1 PM EST
 
-      // If it's already past 1 PM Friday, push to next week
       if (now > target) {
         target.setDate(target.getDate() + 7);
       }
-
       return target;
     }
 
