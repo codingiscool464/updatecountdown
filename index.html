@@ -96,44 +96,53 @@
 
 <body>
 
-  <!-- TOP BUTTONS -->
   <div class="top-links">
     <a class="top-link-btn" href="https://codingiscool464.github.io/suggestionform/" target="_blank">Suggestions</a>
-
-    <!-- NEW CHANGELOGS BUTTON INSERTED HERE -->
     <a class="top-link-btn" href="https://codingiscool464.github.io/changelogs" target="_blank">Changelogs</a>
-
     <a class="top-link-btn" href="https://codingiscool464.github.io">Back to Home</a>
   </div>
 
-  <!-- MAIN BOX -->
   <div class="box">
     <h1>Weekly Update Countdown</h1>
-    <p>Next update drops every Friday at <strong>1:00 PM</strong>!</p>
+    <p>Next update drops every Friday at <strong>1:00 PM</strong> and Tuesday at <strong>1:00 PM</strong>!</p>
 
     <div id="countdown">Loading…</div>
   </div>
 
 <script>
-function getNextFriday() {
+function getNextTarget() {
   const now = new Date();
+  const day = now.getDay();
+  const hour = now.getHours();
 
-  // 5 = Friday
-  let next = new Date();
-  next.setDate(now.getDate() + ((5 - now.getDay() + 7) % 7));
-
-  // If today is Friday but past 1pm, push to next week
-  if (next.toDateString() === now.toDateString() && now.getHours() >= 13) {
-    next.setDate(next.getDate() + 7);
+  let target = new Date();
+  
+  // Determine next target day
+  if (day < 5 || (day === 5 && hour < 13)) {
+    // Before Friday 1pm → target is this Friday
+    const daysUntilFriday = (5 - day + 7) % 7;
+    target.setDate(now.getDate() + daysUntilFriday);
+    target.setHours(13, 0, 0, 0);
+  } else if ((day === 5 && hour >= 13) || (day > 5 || (day < 2))) {
+    // After Friday 1pm → target is next Tuesday
+    const daysUntilTuesday = (2 - day + 7) % 7 || 7;
+    target.setDate(now.getDate() + daysUntilTuesday);
+    target.setHours(13, 0, 0, 0);
   }
 
-  next.setHours(13, 0, 0, 0); // 1:00 PM exact
-  return next;
+  // If today is Tuesday past 1pm → next Friday
+  if (day === 2 && hour >= 13) {
+    const daysUntilFriday = (5 - day + 7) % 7;
+    target.setDate(now.getDate() + daysUntilFriday);
+    target.setHours(13, 0, 0, 0);
+  }
+
+  return target;
 }
 
 function updateCountdown() {
   const now = new Date();
-  const target = getNextFriday();
+  const target = getNextTarget();
   const diff = target - now;
 
   if (diff <= 0) {
