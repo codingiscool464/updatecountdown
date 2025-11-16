@@ -119,28 +119,32 @@
 <script>
 function getNextTarget() {
   const now = new Date();
-  const day = now.getDay();
+  const day = now.getDay(); // 0=Sunday, 1=Monday, 2=Tuesday, ... 5=Friday
   const hour = now.getHours();
 
   let target = new Date();
   let targetName = '';
 
-  if (day < 5 || (day === 5 && hour < 13)) {
-    // Before Friday 1pm → target is this Friday
+  if (day === 2 && hour >= 13) {
+    // Tuesday after 1pm → next Friday
     const daysUntilFriday = (5 - day + 7) % 7;
     target.setDate(now.getDate() + daysUntilFriday);
     target.setHours(13, 0, 0, 0);
     targetName = 'Friday 1:00 PM';
-  } else if ((day === 5 && hour >= 13) || (day > 5 || day < 2)) {
-    // After Friday 1pm → target is next Tuesday
-    const daysUntilTuesday = (2 - day + 7) % 7 || 7;
+  } else if (day === 5 && hour >= 13) {
+    // Friday after 1pm → next Tuesday
+    const daysUntilTuesday = (2 - day + 7) % 7;
     target.setDate(now.getDate() + daysUntilTuesday);
     target.setHours(13, 0, 0, 0);
     targetName = 'Tuesday 1:00 PM';
-  }
-
-  // If today is Tuesday past 1pm → next Friday
-  if (day === 2 && hour >= 13) {
+  } else if (day < 2 || (day === 2 && hour < 13)) {
+    // Sunday or Monday, or Tuesday before 1pm → this Tuesday
+    const daysUntilTuesday = (2 - day + 7) % 7;
+    target.setDate(now.getDate() + daysUntilTuesday);
+    target.setHours(13, 0, 0, 0);
+    targetName = 'Tuesday 1:00 PM';
+  } else {
+    // Otherwise → this Friday
     const daysUntilFriday = (5 - day + 7) % 7;
     target.setDate(now.getDate() + daysUntilFriday);
     target.setHours(13, 0, 0, 0);
