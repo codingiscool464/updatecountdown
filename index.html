@@ -119,7 +119,7 @@
 <script>
 function getNextTarget() {
   const now = new Date();
-  const day = now.getDay(); // 0=Sunday, 1=Monday, 2=Tuesday, ... 5=Friday
+  const day = now.getDay(); // 0=Sunday, 1=Monday, 2=Tuesday, ... 6=Saturday
   const hour = now.getHours();
 
   let target = new Date();
@@ -137,14 +137,20 @@ function getNextTarget() {
     target.setDate(now.getDate() + daysUntilTuesday);
     target.setHours(13, 0, 0, 0);
     targetName = 'Tuesday 1:00 PM';
-  } else if (day < 2 || (day === 2 && hour < 13)) {
-    // Sunday or Monday, or Tuesday before 1pm → this Tuesday
+  } else if (day === 0 || day === 1 || (day === 2 && hour < 13)) {
+    // Sunday, Monday, or Tuesday before 1pm → this Tuesday
+    const daysUntilTuesday = (2 - day + 7) % 7;
+    target.setDate(now.getDate() + daysUntilTuesday);
+    target.setHours(13, 0, 0, 0);
+    targetName = 'Tuesday 1:00 PM';
+  } else if (day === 6) {
+    // Saturday → next Tuesday
     const daysUntilTuesday = (2 - day + 7) % 7;
     target.setDate(now.getDate() + daysUntilTuesday);
     target.setHours(13, 0, 0, 0);
     targetName = 'Tuesday 1:00 PM';
   } else {
-    // Otherwise → this Friday
+    // Otherwise (Wednesday or Thursday, or Friday before 1pm) → this Friday
     const daysUntilFriday = (5 - day + 7) % 7;
     target.setDate(now.getDate() + daysUntilFriday);
     target.setHours(13, 0, 0, 0);
